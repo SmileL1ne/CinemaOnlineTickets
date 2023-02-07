@@ -1,4 +1,4 @@
-package com.oopproject.databaseConnection;
+package com.oopproject.DatabaseConnection;
 
 import java.sql.*;
 
