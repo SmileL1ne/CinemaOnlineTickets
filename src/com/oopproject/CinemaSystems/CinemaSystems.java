@@ -7,10 +7,11 @@ public abstract class CinemaSystems implements Accessible, CSInterface {
     private int rating;
     private int count;
 
-    public CinemaSystems(int cost, String name, int rating) {
+    public CinemaSystems(int cost, String name, int rating, int count) {
         this.cost = cost;
         this.name = name;
         this.rating = rating;
+        this.count = count;
     }
 
     @Override
