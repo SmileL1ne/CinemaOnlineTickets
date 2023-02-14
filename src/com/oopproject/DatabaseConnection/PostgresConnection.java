@@ -4,8 +4,16 @@ import java.sql.*;
 
 public class PostgresConnection {
 
+    private Connection connection;
+    public PostgresConnection(){
+        try{
+            String connectionUrl = "jdbc:postgresql://localhost:7777/cinema_booking";
+            Connection connection = DriverManager.getConnection(connectionUrl, "postgres", "postgres");
+        }catch (SQLException e){
+            System.err.println("Failed to connect to database: " + e.getMessage());
+        }
+    }
     public static void main(String[] args) {
-        String connectionUrl = "jdbc:postgresql://localhost:7777/cinema_booking";
         String query = "select * from admins_list;";
 
         Connection connection = null;
@@ -14,8 +22,6 @@ public class PostgresConnection {
 
         try{
             Class.forName("org.postgresql.Driver");
-
-            connection = DriverManager.getConnection(connectionUrl, "postgres", "postgres");
 
             statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
@@ -38,5 +44,9 @@ public class PostgresConnection {
                 System.out.println(e);
             }
         }
+    }
+
+    public Connection getConnection(){
+        return connection;
     }
 }
