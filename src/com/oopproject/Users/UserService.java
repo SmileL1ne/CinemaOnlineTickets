@@ -1,46 +1,42 @@
 package com.oopproject.Users;
 
-import com.oopproject.DatabaseConnection.PostgresConnection;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Scanner;
+import java.sql.*;
 
 public class UserService {
-
-    private final UserConnection userCon;
-    private PostgresConnection connection;
-    public UserService(UserConnection userCon) {
-        this.userCon = userCon;
+    private final Connection connection;
+    ;
+    public UserService(Connection connection) throws SQLException {
+        this.connection = connection;
     }
 
-    public void registerUser() throws SQLException {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Please write you username: ");
-        String user_username = in.nextLine();
-        System.out.println("Please write your password: ");
-        String user_password = in.nextLine();
-        User user = new User(user_username, user_password);
-        userCon.addUser(user);
+    public void addUser(User user) {
+        String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPassword());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Failed to add user: " + e.getMessage());
+        }
     }
 
-    public boolean userLogIn() {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Please write you username: ");
-        String user_username = in.nextLine();
-        System.out.println("Please write your password: ");
-        String user_password = in.nextLine();
+    public boolean userLogIn(String username, String password) {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-        try (PreparedStatement statement = connection.getConnection().prepareStatement(sql)) {
-            statement.setString(1, user_username);
-            statement.setString(2, user_password);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                return resultSet.next();
-            }
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, username);
+            statement.setString(2, password);
+            return statement.executeQuery().next();
         } catch (SQLException e) {
             System.err.println("Failed to log in user: " + e.getMessage());
             return false;
+        }
+    }
+
+    public void deleteUser(String username) throws SQLException {
+        String sql = "DELETE FROM users WHERE username = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, username);
+            statement.executeUpdate();
         }
     }
 }
