@@ -6,10 +6,8 @@ import com.oopproject.MovieBooking.MovieService;
 import com.oopproject.Users.Admins;
 import com.oopproject.Users.User;
 import com.oopproject.Users.UserService;
-import org.postgresql.jdbc.PgConnection;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Scanner;
 
