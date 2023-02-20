@@ -86,9 +86,6 @@ public class MovieService implements Accessible {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
         }
 
         if (resultSet.next()) {
