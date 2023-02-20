@@ -111,7 +111,7 @@ public class MovieService implements Accessible {
             }
             return true;
         } else {
-            return null;
+            return false;
         }
     }
 
