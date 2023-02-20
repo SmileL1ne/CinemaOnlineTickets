@@ -7,5 +7,5 @@ package com.oopproject.CinemaSystems;
 
 public interface CSInterface {
 
-    int overallCost();
+
 }

@@ -1,7 +1,7 @@
 package com.oopproject;
 
 import com.oopproject.DatabaseConnection.PostgresConnection;
-import com.oopproject.MovieBooking.MovieBooking;
+import com.oopproject.MovieBooking.Movie;
 import com.oopproject.MovieBooking.MovieService;
 import com.oopproject.Users.Admins;
 import com.oopproject.Users.User;
@@ -59,7 +59,7 @@ public class Main {
                                         String movie_duration = scanner.nextLine();
                                         System.out.println("Enter an amount of tickets for the movie: ");
                                         int movie_tickets = scanner.nextInt();
-                                        MovieBooking movie = new MovieBooking(movie_cost, movie_name, movie_rating, movie_duration, movie_tickets);
+                                        Movie movie = new Movie(movie_cost, movie_name, movie_rating, movie_duration, movie_tickets);
                                         movieService.addMovie(movie);
                                     }
                                     case "3" -> {

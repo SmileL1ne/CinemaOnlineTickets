@@ -1,5 +1,6 @@
 package com.oopproject.MovieBooking;
 
+import com.oopproject.CinemaSystems.Accessible;
 import com.oopproject.DatabaseConnection.PostgresConnection;
 
 import java.sql.Connection;
@@ -9,15 +10,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieService implements Bookable{
+public class MovieService implements Accessible {
     private Connection connection;
 
     public MovieService(Connection connection) {
         this.connection = connection;
     }
 
-    public List<MovieBooking> getAllMovies() throws SQLException {
-        List<MovieBooking> movies = new ArrayList<>();
+    public List<Movie> getAllMovies() throws SQLException {
+        List<Movie> movies = new ArrayList<>();
         String query = "SELECT * FROM movies";
         try (PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
@@ -27,14 +28,14 @@ public class MovieService implements Bookable{
                 int rating = resultSet.getInt("raing");
                 String duration = resultSet.getString("duration");
                 int tickets = resultSet.getInt("ticket_count");
-                movies.add(new MovieBooking(cost, name, rating, duration, tickets));
+                movies.add(new Movie(cost, name, rating, duration, tickets));
             }
         }
         return movies;
     }
 
     @Override
-    public boolean isBookable(String name) {
+    public boolean isAccessible(String name) {
         try (Connection conn = PostgresConnection.getConnection()) {
             String sql = "SELECT ticket_count FROM movies WHERE name = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -52,7 +53,7 @@ public class MovieService implements Bookable{
         return false;
     }
 
-    public boolean addMovie(MovieBooking movie) {
+    public boolean addMovie(Movie movie) {
         try (Connection conn = PostgresConnection.getConnection()) {
             String sql = "INSERT INTO movies (title, director, release_date, ticket_count) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {

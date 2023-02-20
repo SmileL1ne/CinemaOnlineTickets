@@ -6,14 +6,13 @@ import com.oopproject.DatabaseConnection.PostgresConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class MovieBooking extends CinemaSystems {
+public class Movie extends CinemaSystems {
 
     private String movieDuration;
     private int tickets;
-    private Connection connection = PostgresConnection.getConnection();
 
-    public MovieBooking(int cost, String name, int rating, String movieDuration, int tickets) throws SQLException {
-        super(cost, name, rating);
+    public Movie(int cost, String name, int rating, String movieDuration, int tickets) throws SQLException {
+        super(cost, name, rating, tickets);
         this.movieDuration = movieDuration;
         this.tickets = tickets;
     }
