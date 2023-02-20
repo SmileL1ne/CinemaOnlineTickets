@@ -83,31 +83,31 @@ public class MovieService implements Accessible {
             statement = connection.prepareStatement(sql);
             statement.setString(1, movieName);
             resultSet = statement.executeQuery(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
 
-        if (resultSet.next()) {
-            ticketCount = resultSet.getInt("ticket_count");
+            if (resultSet.next()) {
+                ticketCount = resultSet.getInt("ticket_count");
 
-            if (ticketCount > 0)
-                ticketCount -= 1;
-            else
-                return false;
+                if (ticketCount > 0)
+                    ticketCount -= 1;
+                else
+                    return false;
 
-            try {
-                sql = "UPDATE movies SET ticket_count = ? WHERE name = ?";
-                statement = connection.prepareStatement(sql);
-                statement.setInt(1, ticketCount);
-                statement.setString(2, movieName);
-                statement.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
+                try {
+                    sql = "UPDATE movies SET ticket_count = ? WHERE name = ?";
+                    statement = connection.prepareStatement(sql);
+                    statement.setInt(1, ticketCount);
+                    statement.setString(2, movieName);
+                    statement.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+                return true;
+            } else {
                 return false;
             }
-            return true;
-        } else {
+        } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
