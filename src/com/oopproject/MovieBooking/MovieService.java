@@ -2,6 +2,7 @@ package com.oopproject.MovieBooking;
 
 import com.oopproject.CinemaSystems.Accessible;
 import com.oopproject.DatabaseConnection.PostgresConnection;
+import com.oopproject.Users.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -70,4 +71,48 @@ public class MovieService implements Accessible {
         }
         return false;
     }
+
+    public boolean buyTicket(User user, String movieName) {
+        ResultSet resultSet;
+        PreparedStatement statement;
+        String sql;
+        int ticketCount;
+
+        try {
+            sql = "SELECT * FROM movies WHERE name = ?";
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, movieName);
+            resultSet = statement.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if (resultSet.next()) {
+            ticketCount = resultSet.getInt("ticket_count");
+
+            if (ticketCount > 0)
+                ticketCount -= 1;
+            else
+                return false;
+
+            try {
+                sql = "UPDATE movies SET ticket_count = ? WHERE name = ?";
+                statement = connection.prepareStatement(sql);
+                statement.setInt(1, ticketCount);
+                statement.setString(2, movieName);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        } else {
+            return null;
+        }
+    }
+
 }
