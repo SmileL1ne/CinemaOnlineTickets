@@ -4,7 +4,6 @@ import java.sql.*;
 
 public class UserService {
     private final Connection connection;
-    ;
     public UserService(Connection connection) throws SQLException {
         this.connection = connection;
     }
@@ -37,6 +36,7 @@ public class UserService {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
             statement.executeUpdate();
+            System.out.println("User was successfully deleted!");
         }
     }
 }

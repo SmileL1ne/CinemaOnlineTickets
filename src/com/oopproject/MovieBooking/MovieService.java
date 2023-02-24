@@ -2,22 +2,20 @@ package com.oopproject.MovieBooking;
 
 import com.oopproject.CinemaSystems.Accessible;
 import com.oopproject.DatabaseConnection.PostgresConnection;
-import com.oopproject.Users.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieService implements Accessible {
-    private Connection connection;
+public class MovieService implements Accessible, IMovieService {
+    private final String connectionUrl = "jdbc:postgresql://localhost:7777/cinema_booking";
+    private final Connection connection = DriverManager.getConnection(connectionUrl, "postgres", "postgres");
 
-    public MovieService(Connection connection) {
-        this.connection = connection;
+    public MovieService() throws SQLException {
     }
 
+
+    @Override
     public List<Movie> getAllMovies() throws SQLException {
         List<Movie> movies = new ArrayList<>();
         String query = "SELECT * FROM movies";
@@ -26,13 +24,17 @@ public class MovieService implements Accessible {
             while (resultSet.next()) {
                 String name = resultSet.getString("name");
                 int cost = resultSet.getInt("cost");
-                int rating = resultSet.getInt("raing");
+                int rating = resultSet.getInt("rating");
                 String duration = resultSet.getString("duration");
                 int tickets = resultSet.getInt("ticket_count");
-                movies.add(new Movie(cost, name, rating, duration, tickets));
+                if(tickets>0) movies.add(new Movie(cost, name, rating, duration, tickets));
             }
         }
         return movies;
+    }
+
+    public void printAllMovies(List<Movie> movies){
+        movies.forEach(System.out::println);
     }
 
     @Override
@@ -54,9 +56,10 @@ public class MovieService implements Accessible {
         return false;
     }
 
+    @Override
     public boolean addMovie(Movie movie) {
         try (Connection conn = PostgresConnection.getConnection()) {
-            String sql = "INSERT INTO movies (title, director, release_date, ticket_count) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO movies (name, cost, rating, duration, ticket_count) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, movie.getName());
                 stmt.setInt(2, movie.getCost());
@@ -72,7 +75,7 @@ public class MovieService implements Accessible {
         return false;
     }
 
-    public boolean buyTicket(User user, String movieName) {
+    public boolean buyTicket(String movieName) {
         ResultSet resultSet;
         PreparedStatement statement;
         String sql;
@@ -82,16 +85,13 @@ public class MovieService implements Accessible {
             sql = "SELECT * FROM movies WHERE name = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, movieName);
-            resultSet = statement.executeQuery(sql);
+            resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
                 ticketCount = resultSet.getInt("ticket_count");
 
-                if (ticketCount > 0)
-                    ticketCount -= 1;
-                else
-                    return false;
-
+                if (ticketCount > 0) ticketCount -= 1;
+                else return false;
                 try {
                     sql = "UPDATE movies SET ticket_count = ? WHERE name = ?";
                     statement = connection.prepareStatement(sql);
@@ -102,12 +102,14 @@ public class MovieService implements Accessible {
                     e.printStackTrace();
                     return false;
                 }
+                System.out.println("Successfully bought a ticket! Enjoy the movie!");
                 return true;
             } else {
+                System.out.println("Failed to buy a ticket");
                 return false;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error buying a ticket: " + e.getMessage());
             return false;
         }
     }

@@ -1,11 +1,11 @@
 package com.oopproject.CinemaSystems;
 
-public abstract class CinemaSystems implements Accessible, CSInterface {
+public abstract class CinemaSystems implements Accessible {
 
-    private int cost;
-    private String name;
-    private int rating;
-    private int tickets;
+    private final int cost;
+    private final String name;
+    private final int rating;
+    private final int tickets;
 
     public CinemaSystems(int cost, String name, int rating, int tickets) {
         this.cost = cost;
